@@ -1,9 +1,7 @@
-import java.util.Collections;
-
-static final int willInvest = 1;
-static final int searchCeiling = 2;
+static final int willInvest = 9;
+static final int searchCeiling = 4;
 static int currentLevel = 0;
-static int currentValue = 0;
+static float currentValue = 0;
 static Engine engine;
 
 //static int count = 0;
@@ -16,12 +14,14 @@ class LineNode implements Comparable {
   float value;
   
   LineNode(Position pos, int level) {
+    //System.out.println(level);
     //all[level]++;
     //if(level == 2) count++;
     //System.out.println(count);
     this.pos = pos;
     this.level = level;
-    if(level < currentLevel + searchCeiling && pos.value > currentValue - willInvest) {
+    if(level < currentLevel + searchCeiling
+        && pos.value > currentValue - willInvest) {
       branch();
     } else {
       this.value = pos.value;
@@ -45,23 +45,29 @@ class LineNode implements Comparable {
     // for each possible move, create new board with that move, do things
     float total = 0;
     children = new ArrayList<LineNode>();
-    for(int i = 0; i < moves.size(); i++) {
-      Move m = moves.get(i);
-      if(m == null) continue;
-      // create new position with move applied
-      Position newPos = m.applyTo(this.pos);
-      // evaluate new position, passing old position value as reference before take
-      newPos.evaluate(this.pos.value);
-      
-      // create child, wait for recursive completion
-      LineNode child = new LineNode(newPos, level + 1);
-      // after recursive completion, add to list
-      children.add(child);
-      // add to total for later average
-      total += child.value;
+    float average;
+    if(moves.size() > 0) {
+      for(int i = 0; i < moves.size(); i++) {
+        Move m = moves.get(i);
+        if(m == null) continue;
+        // create new position with move applied
+        Position newPos = m.applyTo(this.pos);
+        // evaluate new position, passing old position value as reference before take
+        newPos.evaluate(this.pos.value);
+        
+        // create child, wait for recursive completion
+        LineNode child = new LineNode(newPos, level + 1);
+        //System.out.println(child.level + ": " + child.value);
+        // after recursive completion, add to list
+        children.add(child);
+        // add to total for later average
+        total += child.value;
+      }
+      average = (float) total / children.size();
+    } else {
+      System.out.println("J");
+      average = -500;
     }
-    Collections.sort(children);
-    float average = (float) total / children.size();
     this.value = average;
   }
   
@@ -78,7 +84,6 @@ class LineNode implements Comparable {
       for(LineNode child : children) {
         total += child.grow();
       }
-      Collections.sort(children);
       this.value = total / children.size();
       return this.value;
     }

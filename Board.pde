@@ -67,5 +67,11 @@ class Board {
         s.show();
       }
     }
+    pushStyle();
+      fill(0, 255, 255);
+      ellipse(pos.turnKingCoord.file * w + w/2, (8 - pos.turnKingCoord.rank) * h - h/2, 15, 15);
+      fill(255, 0, 255);
+      ellipse(pos.opponentKingCoord.file * w + w/2, (8 - pos.opponentKingCoord.rank) * h - h/2, 15, 15);
+    popStyle();
   }
 }

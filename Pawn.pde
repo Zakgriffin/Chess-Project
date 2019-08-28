@@ -22,20 +22,22 @@ class Pawn extends ChessPiece {
     if(pieceAt(-1, 1) != null) moves.add(at(-1, 1));
     
     // en passant
+    int f2 = ref(file);
+    int r2 = ref(rank);
     Move lastMove = pos.mostRecentMove;
-    if(rank == 3 || rank == 4) {
-      if(lastMove.moved instanceof Pawn) {
-        Move fish = null;
-        if(rank == 3) {
-          if(lastMove.from.rank == 1 && lastMove.to.rank == 3) fish = at(2, lastMove.from.file);
-        } else {
-          if(lastMove.from.rank == 6 && lastMove.to.rank == 4) fish = at(2, lastMove.from.file);
-        }
-        if(fish != null) {
-          fish.type = Type.ENPASSANT;
-          fish.taken = lastMove.moved;
-          moves.add(fish);
-        }
+    if(lastMove != null) {
+      ChessPiece lastMoved = lastMove.moved;
+      if(lastMoved instanceof Pawn // opponent just moved pawn
+          && r2 == 3 // this pawn is on 4th rank
+          && ref(lastMove.to.rank) == 3 // opponent pawn on 4th rank
+          && Math.abs(ref(lastMove.to.file) - f2) == 1) { // pawns are 1 file away
+        Move move = new Move();
+        move.moved = this;
+        move.from = new Coord(rank, file);
+        move.to = new Coord(rank == 3 ? 2 : 5, lastMove.to.file);
+        move.type = Type.ENPASSANT;
+        move.coord2 = lastMove.to;
+        moves.add(move);
       }
     }
     
@@ -45,6 +47,10 @@ class Pawn extends ChessPiece {
     }
     
     return moves;
+  }
+  
+  int ref(int x) {
+    return x < 4 ? x : 7 - x;
   }
   
   void show(float x, float y) {

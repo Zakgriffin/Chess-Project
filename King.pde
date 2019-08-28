@@ -15,6 +15,7 @@ class King extends ChessPiece {
     moves.add(at(1, -1));
     moves.add(at(-1, 1));
     moves.add(at(-1, -1));
+    
     return moves;
   }
   

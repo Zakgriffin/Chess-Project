@@ -1,3 +1,5 @@
+import java.util.Collections;
+
 class Engine extends Player {
   LineNode currentPosNode;
   
@@ -21,10 +23,12 @@ class Engine extends Player {
     System.out.println();*/
     
     // update currentPosNode to best move node
+    Collections.sort(currentPosNode.children);
     currentPosNode = currentPosNode.children.get(currentPosNode.children.size() - 1);
     // best move is most recently made
     Move best = currentPosNode.pos.mostRecentMove;
     currentLevel++;
+    currentValue = currentPosNode.value;
 
     return best;
   }
@@ -42,6 +46,7 @@ class Engine extends Player {
       }
     }
     currentLevel++;
+    currentValue = currentPosNode.value;
   }
 }
 

@@ -63,7 +63,7 @@ class GraphicalPlayer extends Player {
           }
           pushStyle();
             noStroke();
-            if(m.type == Type.TAKE) fill(255, 255, 0); // yellow
+            if(m.type == Type.TAKE || m.type == Type.ENPASSANT) fill(255, 255, 0); // yellow
             else fill(0, 255, 0); // green
             circle(v.x, v.y, 15);
           popStyle();

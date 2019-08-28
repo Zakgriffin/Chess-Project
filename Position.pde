@@ -4,7 +4,10 @@ class Position implements Comparable {
   Move mostRecentMove;
   Player hasTurn, notTurn;
   boolean isCheck;
+  
   Coord turnKingCoord, opponentKingCoord; // faster to store king position than look at all pieces for checks
+  boolean turnCanCastleKing, turnCanCastleQueen;
+  boolean opponentCanCastleKing, opponentCanCastleQueen;
   
   Position(ChessPiece[][] pieces, Move mostRecentMove) {
     this.pieces = pieces;
@@ -50,7 +53,7 @@ class Position implements Comparable {
   void evaluate(float base) {
     // evaluates the position for player with turn
     if(mostRecentMove.type == Type.TAKE) {
-      value = base + mostRecentMove.taken.pieceValue();
+      value = base + mostRecentMove.piece2.pieceValue();
     }
   }
   
@@ -70,18 +73,16 @@ class Position implements Comparable {
     ChessPiece piece = pieces[r][f];
     if(piece == null) return legalMoves; // no piece on this tile
     if(piece.owner != hasTurn) return legalMoves; // piece of player without current turn
-    piece.setTemp(this, r, f); // set temporary details to treat as static method
     
+    piece.setTemp(this, r, f); // set temporary details to treat as static method
     ArrayList<Move> moves = piece.getMoves(); // get moves for this piece
-    return moves;
-    /*
     // check checking process
-    candidateLoop: for(Move candidate : moves) { // loop over candidates
+    for(Move candidate : moves) { // loop over candidates
     if(candidate == null) continue;
       Position testPosition = candidate.applyTo(this); // create new position after candidate move
       if(testPosition.kingIsAttacked(testPosition.opponentKingCoord)) {
         // put king in danger or left in check: candidate move was illegal, try next move
-        continue candidateLoop;
+        continue;
       }
       if(testPosition.kingIsAttacked(testPosition.turnKingCoord)) {
         // checking opponent
@@ -91,7 +92,6 @@ class Position implements Comparable {
       legalMoves.add(candidate);
     }
     return legalMoves;
-    */
   }
   
   boolean kingIsAttacked(Coord kingCoord) {
@@ -127,7 +127,6 @@ class Position implements Comparable {
     knights.add(pieceAt(kingCoord, -2, 1));
     knights.add(pieceAt(kingCoord, -2, -1));
     for(ChessPiece piece : knights) {
-      System.out.println(0);
       if(piece == null || piece.owner == notTurn) continue;
       if(piece instanceof Knight) return true;
     }
@@ -137,7 +136,6 @@ class Position implements Comparable {
     pawns.add(pieceAt(kingCoord, 1, x));
     pawns.add(pieceAt(kingCoord, -1, x));
     for(ChessPiece piece : pawns) {
-      System.out.println(0);
       if(piece == null || piece.owner == notTurn) continue;
       if(piece instanceof Pawn) return true;
     }

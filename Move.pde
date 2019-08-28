@@ -3,8 +3,8 @@ static enum Type {
 }
 
 class Move {
-  ChessPiece moved, taken;
-  Coord from, to;
+  ChessPiece moved, piece2;
+  Coord from, to, coord2;
   Type type;
   boolean givesCheck;
   
@@ -13,59 +13,51 @@ class Move {
     this.to = new Coord(toR, toF);
     this.from = new Coord(fromR, fromF);
     this.type = type;
-    if(type == Type.TAKE) this.taken = pieces[toR][toF];
+    if(type == Type.TAKE) this.piece2 = pieces[toR][toF];
   }
   Move(ChessPiece[][] pieces, int fromR, int fromF, int toR, int toF) {
     this(pieces, fromR, fromF, toR, toF, Type.MOVE);
   }
+  Move() {}
   
   Position applyTo(Position old) {
-    ChessPiece[][] newBoard = old.clonePieces();
-    if(type == Type.MOVE || type == Type.TAKE) {
-      newBoard[to.rank][to.file] = moved;
-      newBoard[from.rank][from.file] = null;
-    } else if(type == Type.CASTLE) {
-      // TODO
-    } else if(type == Type.ENPASSANT) {
-      newBoard[to.rank][to.file] = moved;
-      newBoard[from.rank][from.file] = null;
-    } else if(type == Type.PROMOTE) {
-      Queen newQueen = new Queen(old.hasTurn);
-      newBoard[to.rank][to.file] = newQueen;
-      newBoard[from.rank][from.file] = null;
+    ChessPiece[][] newPieces = old.clonePieces();
+    switch(type) {
+      case MOVE: newPieces[to.rank][to.file] = moved;
+        break;
+      case TAKE: newPieces[to.rank][to.file] = moved;
+        break;
+      case CASTLE:
+        
+        break;
+      case PROMOTE:
+        Queen newQueen = new Queen(old.hasTurn);
+        newPieces[to.rank][to.file] = newQueen;
+        break;
+      case ENPASSANT:
+        newPieces[to.rank][to.file] = moved;
+        newPieces[coord2.rank][coord2.file] = null;
+        break;
     }
-    Position newPos = new Position(newBoard, this);
-    if(moved instanceof King) {
-      newPos.turnKingCoord = new Coord(to.rank, to.file);
-    } else {
-      newPos.turnKingCoord = old.opponentKingCoord;
-    }
-    newPos.opponentKingCoord = old.turnKingCoord;
+    newPieces[from.rank][from.file] = null; // remove piece from tile it came from
+    
+    Position newPos = new Position(newPieces, this); // create new position
+    // flip turns
     newPos.hasTurn = old.notTurn;
     newPos.notTurn = old.hasTurn;
+    
+    // flip king coords and modify if moved
+    if(moved instanceof King) {
+      newPos.opponentKingCoord = new Coord(to.rank, to.file);
+      newPos.opponentCanCastleKing = false;
+    }
+    else newPos.opponentKingCoord = old.turnKingCoord;
+    newPos.turnKingCoord = old.opponentKingCoord;
+    
     return newPos;
   }
   
   boolean matches(Move m) {
     return m.from.matches(this.from) && m.to.matches(this.to);
-  }
-  
-  boolean isLegal(Position pos) {
-    if(this.moved instanceof Knight) return true;
-    int rankChange = to.rank - from.rank;
-    int fileChange = to.file - from.file;
-    int max = max(rankChange, fileChange);
-    rankChange /= max;
-    fileChange /= max;
-    
-    int r = from.rank + rankChange;
-    int f = from.file + fileChange;
-    
-    while(!to.isAt(r, f)) {
-      if(pos.pieces[r][f] != null) return false;
-      r += rankChange;
-      f += fileChange;
-    }
-    return true;
   }
 }
