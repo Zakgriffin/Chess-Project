@@ -17,11 +17,6 @@ void setup() {
 boolean flag;
 void draw() {
   background(0);
-  if(!flag && keyPressed && key == ' ') {
-    game.switchPlayer();
-    flag = true;
-  }
-  if(!keyPressed) flag = false;
   
   board.show();
   game.onLoop(); // handle piece moving

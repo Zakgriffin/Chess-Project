@@ -3,13 +3,17 @@ import java.util.Collections;
 class Engine extends Player {
   LineNode currentPosNode;
   
+  final int bredth = 12;
+  final int searchCeiling = 4;
+  int currentLevel = 0;
+  float currentValue = 0;
+  
   Engine(color col) {
     super(col);
-    engine = this;
   }
   
   void setBoard(Board board) {
-    this.currentPosNode = new LineNode(board.pos, 0);
+    this.currentPosNode = new LineNode(board.pos, 0, this);
   }
   
   Move awaitMove() {
@@ -18,17 +22,18 @@ class Engine extends Player {
     
     // long pause...
     
-    /*for(int i = 0; i < 6; i++) {System.out.print(i + ": " + all[i] + ", ");}
-    for(int i = 0; i < 6; i++) {all[i] = 0;}
-    System.out.println();*/
-    
     // update currentPosNode to best move node
     Collections.sort(currentPosNode.children);
-    currentPosNode = currentPosNode.children.get(currentPosNode.children.size() - 1);
+    for(LineNode a : currentPosNode.children) {
+      System.out.println(a.value);
+    }
+    
+    currentPosNode = currentPosNode.children.get(0);
     // best move is most recently made
     Move best = currentPosNode.pos.mostRecentMove;
     currentLevel++;
     currentValue = currentPosNode.value;
+    System.out.println("HEHEHE " + currentValue);
 
     return best;
   }
@@ -39,7 +44,6 @@ class Engine extends Player {
     for(LineNode node : currentPosNode.children) {
       // get the last move made by the player
       Move candidate = node.pos.mostRecentMove;
-      //System.out.println(candidate.to.rank + "," + candidate.to.file);
       if(m.matches(candidate)) {
         currentPosNode = node;
         break;
@@ -49,15 +53,3 @@ class Engine extends Player {
     currentValue = currentPosNode.value;
   }
 }
-
-/*
-
-find all potential moves, put in arraylist
-evaluate point difference if was a take
-sort arraylist
-propagate value back up line
-look at highest in list
-create new LineNode with this position
-constructor: branch repeat IF 
-
-*/

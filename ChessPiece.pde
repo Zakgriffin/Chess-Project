@@ -1,6 +1,7 @@
 abstract class ChessPiece {
   final Player owner;
   final color col;
+  
   ChessPiece[][] pieces;
   int rank, file;
   Position pos;
@@ -10,15 +11,14 @@ abstract class ChessPiece {
     this.col = owner.col;
   }
   
-  void setTemp(Position p, int rank, int file) {
-    this.pieces = p.pieces;
+  void setTemp(Position pos, int rank, int file) {
+    this.pos = pos;
     this.rank = rank;
     this.file = file;
-    this.pos = p;
+    this.pieces = pos.pieces;
   }
   
   abstract ArrayList<Move> getMoves();
-  
   abstract int pieceValue();
   abstract void show(float x, float y);
   

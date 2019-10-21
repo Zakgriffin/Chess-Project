@@ -44,8 +44,6 @@ class Board {
     addPiecePair(0, 5, new Bishop(p1), new Bishop(p2));
     addPiecePair(0, 6, new Knight(p1), new Knight(p2));
     addPiecePair(0, 7, new Rook(p1), new Rook(p2));
-    
-    pos.findKings();
   }
   
   void addPiecePair(int r, int f, ChessPiece white, ChessPiece black) {
@@ -69,9 +67,9 @@ class Board {
     }
     pushStyle();
       fill(0, 255, 255);
-      ellipse(pos.turnKingCoord.file * w + w/2, (8 - pos.turnKingCoord.rank) * h - h/2, 15, 15);
+      //ellipse(pos.turnKingCoord.file * w + w/2, (8 - pos.turnKingCoord.rank) * h - h/2, 15, 15);
       fill(255, 0, 255);
-      ellipse(pos.opponentKingCoord.file * w + w/2, (8 - pos.opponentKingCoord.rank) * h - h/2, 15, 15);
+      //ellipse(pos.opponentKingCoord.file * w + w/2, (8 - pos.opponentKingCoord.rank) * h - h/2, 15, 15);
     popStyle();
   }
 }

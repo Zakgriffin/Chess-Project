@@ -6,7 +6,6 @@ class Move {
   ChessPiece moved, piece2;
   Coord from, to, coord2;
   Type type;
-  boolean givesCheck;
   
   Move(ChessPiece[][] pieces, int fromR, int fromF, int toR, int toF, Type type) {
     this.moved = pieces[fromR][fromF];
@@ -41,19 +40,7 @@ class Move {
     }
     newPieces[from.rank][from.file] = null; // remove piece from tile it came from
     
-    Position newPos = new Position(newPieces, this); // create new position
-    // flip turns
-    newPos.hasTurn = old.notTurn;
-    newPos.notTurn = old.hasTurn;
-    
-    // flip king coords and modify if moved
-    if(moved instanceof King) {
-      newPos.opponentKingCoord = new Coord(to.rank, to.file);
-      newPos.opponentCanCastleKing = false;
-    }
-    else newPos.opponentKingCoord = old.turnKingCoord;
-    newPos.turnKingCoord = old.opponentKingCoord;
-    
+    Position newPos = new Position(old, this, newPieces); // create new position
     return newPos;
   }
   
