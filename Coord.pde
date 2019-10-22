@@ -13,4 +13,8 @@ class Coord {
   boolean isAt(int r, int f) {
     return rank == r && file == f;
   }
+  
+  String toString() {
+    return "("+ file + ", " + rank + ")";
+  }
 }

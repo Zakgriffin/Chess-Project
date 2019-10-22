@@ -2,7 +2,10 @@ static GameHandler game;
 static Player p1, p2;
 static Board board;
 
+static PrintWriter output;
+
 void setup() {
+  output = createWriter("print_out.txt");
   size(750, 750); // create canvas with x and y size
   rectMode(CENTER);
   pixelDensity(2);

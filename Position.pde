@@ -13,7 +13,6 @@ class Position {
     
     this.hasTurn = old.notTurn;
     this.notTurn = old.hasTurn;
-    this.value = -old.value - evaluateDif();
   }
   Position(Player p1, Player p2) {
     // initial contructor
@@ -32,13 +31,14 @@ class Position {
     return newPieces;
   }
   
-  int evaluateDif() {
+  void evaluateDif(int oldPosValue) {
     // evaluates the position for player with turn
-    int dif = 0;
+    if(mostRecentMove == null) return;
     if(mostRecentMove.type == Type.TAKE) {
-      dif = mostRecentMove.piece2.pieceValue();
+      this.value = oldPosValue + mostRecentMove.piece2.pieceValue();
+    } else {
+      this.value = oldPosValue;
     }
-    return dif;
   }
   
   ArrayList<Move> getAllLegalMoves() {

@@ -47,4 +47,10 @@ class Move {
   boolean matches(Move m) {
     return m.from.matches(this.from) && m.to.matches(this.to);
   }
+  
+  String toString() {
+    String s = (moved.getClass().getName()) + " " + from + " -> " + to;
+    if(type == Type.TAKE) s += ": TAKES " + piece2.getClass().getName();
+    return s;
+  }
 }

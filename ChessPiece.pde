@@ -1,10 +1,11 @@
 abstract class ChessPiece {
-  final Player owner;
-  final color col;
-  
-  ChessPiece[][] pieces;
   int rank, file;
   Position pos;
+  
+  // temp variables for specific position
+  final Player owner;
+  final color col;
+  ChessPiece[][] pieces;
   
   ChessPiece(Player owner) {
     this.owner = owner;
@@ -30,15 +31,15 @@ abstract class ChessPiece {
     int f2 = file + xChange;
     while(inBounds(r2, f2)) {
       // as long as within bounds of board, add to list and apply change
-      if(pieces[r2][f2] != null) {
-        // collided with other piece, add to list then stop
-        if(pieces[r2][f2].owner != owner) moves.add(new Move(pieces, rank, file, r2, f2, Type.TAKE));
-        break;
-      } else {
+      if(pieces[r2][f2] == null) {
         // continue ray
         moves.add(new Move(pieces, rank, file, r2, f2));
         r2 += yChange;
         f2 += xChange;
+      } else {
+        // collided with other piece, add to list then stop
+        if(pieces[r2][f2].owner != owner) moves.add(new Move(pieces, rank, file, r2, f2, Type.TAKE));
+        break;
       }
     }
     return moves;
